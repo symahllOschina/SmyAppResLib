@@ -1,5 +1,9 @@
 package com.symapp.reslib;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -12,6 +16,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /**
+         * 接收USB设备插入，拔出状态
+         */
+//        IntentFilter filter = new IntentFilter(USBPrinter.IS_USB_CONN_ACTION);
+//        registerReceiver(receiver, filter);
 
         USBPrinter usbPrinter = USBPrinter.getInstance();
         USBPrinter.initPrinter(MainActivity.this);
@@ -32,6 +42,30 @@ public class MainActivity extends AppCompatActivity {
         usbPrinter.printLine(5);
         usbPrinter.cutPager();
     }
+
+
+    /*BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            String state = intent.getExtras().getString("state");
+
+            if(state.equals(USBPrinter.USB_CONN_STATUS_INPUT)){
+
+                ToastUtil.showText(context, "有设备插入",1);
+
+            }else if(state.equals(USBPrinter.USB_CONN_STATUS_OUTPUT)){
+
+                ToastUtil.showText(context, "有设备拔出",1);
+
+            }else if(state.equals(USBPrinter.USB_CONN_STATUS_DISABLE)){
+
+                ToastUtil.showText(context,"USB设备请求被拒绝",1);
+
+            }
+        }
+    };*/
 
     @Override
     protected void onDestroy() {

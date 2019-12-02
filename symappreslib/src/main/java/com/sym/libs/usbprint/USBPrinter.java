@@ -1,8 +1,5 @@
 package com.sym.libs.usbprint;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -17,12 +14,13 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.sym.libs.util.ToastUtil;
+
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 public class USBPrinter {
     public static final String ACTION_USB_PERMISSION = "com.usb.printer.USB_PERMISSION";
@@ -38,6 +36,12 @@ public class USBPrinter {
     private UsbInterface usbInterface;
 
     private static final int TIME_OUT = 100000;
+
+
+    public static final String IS_USB_CONN_ACTION = "is.usb.conn.action";
+    public static final String USB_CONN_STATUS_INPUT = "INPUT";
+    public static final String USB_CONN_STATUS_OUTPUT = "OUTPUT";
+    public static final String USB_CONN_STATUS_DISABLE = "DISABLE";
 
     public static USBPrinter getInstance() {
         if (mInstance == null) {
@@ -94,6 +98,7 @@ public class USBPrinter {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d("action", action);
+            Intent in = null;
             UsbDevice mUsbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
@@ -101,15 +106,24 @@ public class USBPrinter {
                         Log.d("receiver", action);
                         connectUsbPrinter(mUsbDevice);
                     } else {
-                        ToastUtil.showText(context,"USB设备请求被拒绝",1);
+//                        ToastUtil.showText(context,"USB设备请求被拒绝",1);
+                        in = new Intent(IS_USB_CONN_ACTION);
+                        in.putExtra("state",USB_CONN_STATUS_DISABLE);
+                        context.sendBroadcast(in);
                     }
                 }
             } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
                 if (mUsbDevice != null) {
-                    ToastUtil.showText(context, "有设备拔出",1);
+                    in = new Intent(IS_USB_CONN_ACTION);
+                    in.putExtra("state",USB_CONN_STATUS_OUTPUT);
+                    context.sendBroadcast(in);
+//                    ToastUtil.showText(context, "有设备拔出",1);
                 }
             } else if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
-                ToastUtil.showText(context, "有设备插入",1);
+//                ToastUtil.showText(context, "有设备插入",1);
+                in = new Intent(IS_USB_CONN_ACTION);
+                in.putExtra("state",USB_CONN_STATUS_INPUT);
+                context.sendBroadcast(in);
                 if (mUsbDevice != null) {
                     if (!mUsbManager.hasPermission(mUsbDevice)) {
                         mUsbManager.requestPermission(mUsbDevice, mPermissionIntent);
