@@ -28,6 +28,7 @@ public class USBPrinter {
     private static USBPrinter mInstance;
 
     private Context mContext;
+    private static boolean isToast;
     private PendingIntent mPermissionIntent;
     private UsbManager mUsbManager;
     private UsbDeviceConnection mUsbDeviceConnection;
@@ -59,8 +60,9 @@ public class USBPrinter {
      *
      * @param context 上下文
      */
-    public static void initPrinter(Context context) {
+    public static void initPrinter(Context context,boolean isToast) {
         getInstance().init(context);
+        USBPrinter.isToast = isToast;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -152,7 +154,10 @@ public class USBPrinter {
                         mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
                         printerEp = ep;
                         if (mUsbDeviceConnection != null) {
-                            ToastUtil.showText(mContext, "设备已连接",1);
+                            if(isToast){
+                                ToastUtil.showText(mContext, "设备已连接",1);
+                            }
+
                             mUsbDeviceConnection.claimInterface(usbInterface, true);
 //                            mUsbDeviceConnection.releaseInterface(usbInterface);
                         }

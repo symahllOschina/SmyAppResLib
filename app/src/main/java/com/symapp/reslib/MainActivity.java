@@ -6,11 +6,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import com.sym.libs.usbprint.USBPrinter;
 import com.sym.libs.util.ToastUtil;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,24 +27,32 @@ public class MainActivity extends AppCompatActivity {
 //        IntentFilter filter = new IntentFilter(USBPrinter.IS_USB_CONN_ACTION);
 //        registerReceiver(receiver, filter);
 
-        USBPrinter usbPrinter = USBPrinter.getInstance();
-        USBPrinter.initPrinter(MainActivity.this);
-        usbPrinter.bold(true);
-        usbPrinter.setTextSize(3);
-        usbPrinter.setAlign(1);
-        usbPrinter.printTextNewLine("标题");
-        usbPrinter.printLine(1);
-        usbPrinter.setTextSize(0);
-        usbPrinter.setAlign(0);
-        usbPrinter.bold(false);
-        usbPrinter.printTextNewLine("出品单号："+"54545646456");
-        usbPrinter.printTextNewLine("出品员："+"偶家哈吉娃娃i哦我是等级");
-        usbPrinter.printBarCode("6936983800013");
-        usbPrinter.printLine(1);
-        usbPrinter.setAlign(1);
-        usbPrinter.printQRCode("6936983800013",12);
-        usbPrinter.printLine(5);
-        usbPrinter.cutPager();
+        textView = findViewById(R.id.helloworld);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                USBPrinter usbPrinter = USBPrinter.getInstance();
+                USBPrinter.initPrinter(MainActivity.this,false);
+                usbPrinter.bold(true);
+                usbPrinter.setTextSize(3);
+                usbPrinter.setAlign(1);
+                usbPrinter.printTextNewLine("标题");
+                usbPrinter.printLine(1);
+                usbPrinter.setTextSize(0);
+                usbPrinter.setAlign(0);
+                usbPrinter.bold(false);
+                usbPrinter.printTextNewLine("出品单号："+"54545646456");
+                usbPrinter.printTextNewLine("出品员："+"偶家哈吉娃娃i哦我是等级");
+                usbPrinter.printBarCode("6936983800013");
+                usbPrinter.printLine(1);
+                usbPrinter.setAlign(1);
+                usbPrinter.printQRCode("6936983800013",12);
+                usbPrinter.printLine(5);
+                usbPrinter.cutPager();
+            }
+        });
+
+
     }
 
 
